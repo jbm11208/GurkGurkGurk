@@ -4,23 +4,19 @@ version: "1.6.9"
 api-version: "1.21"
 author: jbm11208
 description: Gurk Gurk Gurk
-commands:
 
+commands:
   gurk:
     description: Gives sea pickles; '/gurk pickle' or '/gurk waffle'
     usage: /<command> [pickle|waffle|gurkenwerfer]
     aliases: gurken
-    permission: gurk.pickle
-    permission-message: You do not have permission to use this command.
-  base:
-    description: Base permission for using the /gurk command
-    usage: /gurk
     permission: gurk.base
     permission-message: You do not have permission to use this command.
+
 permissions:
   gurk.base:
     description: Base permission for using the /gurk command
-    default: not op
-  gurk.pickle:
-    description: Unlocks the pickle
+    default: true
+  gurk.gurkenwerfer:
+    description: Unlocks the gurkenwerfer subcommand
     default: op
