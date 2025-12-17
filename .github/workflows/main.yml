@@ -14,17 +14,15 @@ on:
 
 concurrency:
   group: ${{ format('{0}-{1}', github.workflow, github.ref) }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   test:
     name: Run unit tests
-    timeout-minutes: 30
     strategy:
       matrix:
         os: [ windows-latest ]
         java: [ 21 ]
-      fail-fast: false
     runs-on: ${{ matrix.os }}
     permissions:
       contents: write
@@ -32,45 +30,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
+      - name: Common Setup
+        uses: ./.github/actions/common-setup
         with:
-          distribution: 'temurin'
           java-version: ${{ matrix.java }}
-          cache: 'gradle'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          cache-read-only: false
-
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-        shell: bash
 
       - name: Build with Gradle
-        run: ./gradlew build --info --stacktrace
-        shell: bash
+        run: ./gradlew build --info
 
       - name: Upload build results
-        if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.os }}-java-${{ matrix.java }}-build-results
+          name: ${{ matrix.os }} Java ${{ matrix.java }} build results
           path: ${{ github.workspace }}/build/libs/
-          retention-days: 7
 
       - name: Upload test results
-        if: always()
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.os }}-java-${{ matrix.java }}-test-results
+          name: ${{ matrix.os }} Java ${{ matrix.java }} test results
           path: ${{ github.workspace }}/build/reports/
-          retention-days: 7
 
   release:
     runs-on: windows-latest
-    timeout-minutes: 20
     permissions:
       contents: write
     needs:
@@ -79,37 +61,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
+      - name: Common Setup
+        uses: ./.github/actions/common-setup
         with:
-          distribution: 'temurin'
           java-version: 21
-          cache: 'gradle'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          cache-read-only: false
-
-      - name: Make gradlew executable (Linux/Mac)
-        if: runner.os != 'Windows'
-        run: chmod +x ./gradlew
 
       - name: Publish with Gradle
-        run: ./gradlew -Pver="0.0.0-RC-1" release --stacktrace
+        run: ./gradlew -Pver="0.0.0-RC-1" release
 
       - name: Upload build results
-        if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: release-build
+          name: Release Build
           path: ${{ github.workspace }}/build/libs/
-          retention-days: 30
 
   notify:
     name: Send job complete notification
     runs-on: windows-latest
-    timeout-minutes: 10
     needs:
       - test
       - release
@@ -118,27 +86,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
+      - name: Common Setup
+        uses: ./.github/actions/common-setup
         with:
-          distribution: 'temurin'
           java-version: 21
-          cache: 'gradle'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          cache-read-only: true
-
-      - name: Make gradlew executable (Linux/Mac)
-        if: runner.os != 'Windows'
-        run: chmod +x ./gradlew
 
       - name: Retrieve Project Name
-        run: echo "PROJECT_NAME=$(./gradlew -q printProjectName)" >> $GITHUB_ENV
+        run: echo "PROJECT_NAME=$(${{github.workspace}}/gradlew -q printProjectName)" >> $GITHUB_ENV
 
       - name: Notify on success
-        if: needs.test.result == 'success' && needs.release.result == 'success'
+        if: success()
         uses: appleboy/discord-action@v1.2.0
         with:
           webhook_id: ${{ vars.DISCORD_WEBHOOK_ID }}
@@ -150,7 +107,7 @@ jobs:
             https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
       - name: Notify on failure
-        if: needs.test.result == 'failure' || needs.release.result == 'failure'
+        if: failure()
         uses: appleboy/discord-action@v1.2.0
         with:
           webhook_id: ${{ vars.DISCORD_WEBHOOK_ID }}
