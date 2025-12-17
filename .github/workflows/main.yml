@@ -35,6 +35,9 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
 
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
       - name: Build with Gradle
         run: ./gradlew build --info
 
@@ -66,6 +69,9 @@ jobs:
         with:
           java-version: 21
 
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
       - name: Publish with Gradle
         run: ./gradlew -Pver="0.0.0-RC-1" release
 
@@ -90,6 +96,9 @@ jobs:
         uses: ./.github/actions/common-setup
         with:
           java-version: 21
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
       - name: Retrieve Project Name
         run: echo "PROJECT_NAME=$(${{github.workspace}}/gradlew -q printProjectName)" >> $GITHUB_ENV
