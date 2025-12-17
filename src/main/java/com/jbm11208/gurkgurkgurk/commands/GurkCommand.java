@@ -14,8 +14,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-
-// Handles the /gurk command.
+/**
+ * Handles the /gurk command.
+ */
 public class GurkCommand implements CommandExecutor, TabCompleter {
 
   private static final List<String> SUBCOMMANDS =

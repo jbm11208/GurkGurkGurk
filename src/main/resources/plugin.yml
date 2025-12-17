@@ -10,12 +10,17 @@ commands:
     description: Gives sea pickles; '/gurk pickle' or '/gurk waffle'
     usage: /<command> [pickle|waffle]
     aliases: gurken
+    permission: gurk.pickle
+    permission-message: You do not have permission to use this command.
+  base:
+    description: Base permission for using the /gurk command
+    usage: /gurk
+    permission: gurk.base
+    permission-message: You do not have permission to use this command.
 permissions:
-  example.test:
-    description: DESCRIPTION
-    default: true
-  example.*:
-    description: Grants all other permissions
-    default: false
-    children:
-      example.test: true
+  gurk.base:
+    description: Base permission for using the /gurk command
+    default: not op
+  gurk.pickle:
+    description: Unlocks the pickle
+    default: op
