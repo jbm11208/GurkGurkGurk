@@ -52,29 +52,32 @@ public class GurkCommand implements CommandExecutor, TabCompleter {
     final String sub = args[0].toLowerCase(Locale.ROOT);
 
     switch (sub) {
-      case "pickle": {
+      case "pickle":
+      {
         final ItemStack item = new ItemStack(Material.SEA_PICKLE, 1);
         player.getInventory().addItem(item);
         player.sendMessage("You received 1 sea pickle.");
         return true;
       }
-      case "waffle": {
-        final ItemStack item = new ItemStack(Material.SEA_PICKLE, 1);
-        final ItemMeta meta = item.getItemMeta();
-
-        if (meta != null) {
-          meta.setDisplayName("waffle");
-          item.setItemMeta(meta);
+      case "waffle":
+        {
+          final ItemStack item = new ItemStack(Material.SEA_PICKLE, 1);
+          final ItemMeta meta = item.getItemMeta();
+          if (meta != null) {
+            meta.setDisplayName("waffle");
+            final boolean applied = item.setItemMeta(meta);
+            if (!applied) {
+              player.sendMessage("Could not apply item name to the sea pickle.");
+            }
+          }
+          player.getInventory().addItem(item);
           player.sendMessage("You received a \"waffle\".");
-        } else {
-          player.sendMessage("Could not create waffle item.");
+          return true;
         }
-
-        player.getInventory().addItem(item);
-        return true;
-      }
-      case "gurkenwerfer": {
-        // Spigot only enforces command-level permissions, so subcommand permissions must be handled in code.
+      case "gurkenwerfer":
+      {
+        /* Spigot only enforces command-level permissions
+         so subcommand permissions must be handled in code. */
         if (!player.hasPermission("gurk.gurkenwerfer")) {
           player.sendMessage("You do not have permission to use this.");
           return true;
