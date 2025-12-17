@@ -35,8 +35,8 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
 
-      - name: Build with Gradle (skip style checks)
-        run: gradlew.bat assemble test --info
+      - name: Build with Gradle
+        run: ./gradlew build --info
 
       - name: Upload build results
         uses: actions/upload-artifact@v4
@@ -67,7 +67,7 @@ jobs:
           java-version: 21
 
       - name: Publish with Gradle
-        run: gradlew.bat -Pver="0.0.0-RC-1" release
+        run: ./gradlew -Pver="0.0.0-RC-1" release
 
       - name: Upload build results
         uses: actions/upload-artifact@v4
@@ -92,7 +92,7 @@ jobs:
           java-version: 21
 
       - name: Retrieve Project Name
-        run: echo "PROJECT_NAME=$(gradlew.bat -q printProjectName)" >> $GITHUB_ENV
+        run: echo "PROJECT_NAME=$(${{github.workspace}}/gradlew -q printProjectName)" >> $GITHUB_ENV
 
       - name: Notify on success
         if: success()
@@ -115,4 +115,5 @@ jobs:
           color: "#FF0000"
           username: "${{ env.PROJECT_NAME }} Release Bot"
           message: >
-            An ${{ env.PROJECT_N_
+            An ${{ env.PROJECT_NAME }} snapshot deployment ran by ${{ github.actor }} failed:
+            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
