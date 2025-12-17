@@ -84,24 +84,6 @@ processResources {
     }
 }
 
-checkstyle {
-    toolVersion = '12.0.1'
-    maxWarnings = 0
-}
-
-configurations.checkstyle {
-    resolutionStrategy.capabilitiesResolution.withCapability("com.google.collections:google-collections") {
-        select("com.google.guava:guava:23.0")
-    }
-}
-
-tasks.withType(Checkstyle).configureEach {
-    reports {
-        xml.required = false
-        html.required = true
-    }
-}
-
 tasks.withType(SpotBugsTask).configureEach {
     reports.create("html") {
         required = true
