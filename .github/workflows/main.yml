@@ -36,7 +36,7 @@ jobs:
           java-version: ${{ matrix.java }}
 
       - name: Build with Gradle
-        run: sudo sh ./gradlew build --info
+        run: ./gradlew build --info
 
       - name: Upload build results
         uses: actions/upload-artifact@v4
