@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Handles the /gurk command.
@@ -23,7 +24,7 @@ public class GurkCommand implements CommandExecutor, TabCompleter {
   private static final List<String> SUBCOMMANDS =
           List.of("pickle", "waffle", "gurkenwerfer");
 
-  private static final String USAGE = "Usage: /%s [pickle|waffle]";
+  private static final String USAGE = "Usage: /%s [pickle|waffle|gurkenwerfer]";
 
   /**
    * Executes the /gurk command.
@@ -36,7 +37,8 @@ public class GurkCommand implements CommandExecutor, TabCompleter {
    */
   @Override
   public boolean onCommand(final @NotNull CommandSender sender, final @NotNull Command command,
-                           final @NotNull String label, final String[] args) {
+                           final @NotNull String label, final String @NonNull [] args) {
+
     if (!(sender instanceof Player player)) {
       sender.sendMessage("Only players can use this command.");
       return true;
@@ -50,30 +52,33 @@ public class GurkCommand implements CommandExecutor, TabCompleter {
     final String sub = args[0].toLowerCase(Locale.ROOT);
 
     switch (sub) {
-      case "pickle":
-        {
+      case "pickle": {
         final ItemStack item = new ItemStack(Material.SEA_PICKLE, 1);
         player.getInventory().addItem(item);
         player.sendMessage("You received 1 sea pickle.");
         return true;
-        }
-      case "waffle":
-        {
+      }
+      case "waffle": {
         final ItemStack item = new ItemStack(Material.SEA_PICKLE, 1);
         final ItemMeta meta = item.getItemMeta();
+
         if (meta != null) {
           meta.setDisplayName("waffle");
-          final boolean applied = item.setItemMeta(meta);
-          if (!applied) {
-            player.sendMessage("Could not apply item name to the sea pickle.");
-          }
+          item.setItemMeta(meta);
+          player.sendMessage("You received a \"waffle\".");
+        } else {
+          player.sendMessage("Could not create waffle item.");
         }
+
         player.getInventory().addItem(item);
-        player.sendMessage("You received a \"waffle\".");
         return true;
+      }
+      case "gurkenwerfer": {
+        // Spigot only enforces command-level permissions, so subcommand permissions must be handled in code.
+        if (!player.hasPermission("gurk.gurkenwerfer")) {
+          player.sendMessage("You do not have permission to use this.");
+          return true;
         }
-      case "gurkenwerfer":
-        {
         player.sendMessage("Summoning the Pickle Man...");
         Bukkit.dispatchCommand(player, "summon frog ~ ~ ~ "
                 + "{variant:temperate,Health:9999,active_effects:"
@@ -89,12 +94,11 @@ public class GurkCommand implements CommandExecutor, TabCompleter {
                 + ":1024f},"
                 + "{id:scale,base:0.5f},{id:max_health,base:420f}]}]}");
         return true;
-        }
-      default:
-        {
+      }
+      default: {
         player.sendMessage(String.format(USAGE, label));
         return true;
-        }
+      }
     }
   }
 
