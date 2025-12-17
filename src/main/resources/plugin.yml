@@ -8,7 +8,7 @@ commands:
 
   gurk:
     description: Gives sea pickles; '/gurk pickle' or '/gurk waffle'
-    usage: /<command> [pickle|waffle]
+    usage: /<command> [pickle|waffle|gurkenwerfer]
     aliases: gurken
     permission: gurk.pickle
     permission-message: You do not have permission to use this command.

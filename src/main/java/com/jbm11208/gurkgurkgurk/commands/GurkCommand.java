@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -20,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 public class GurkCommand implements CommandExecutor, TabCompleter {
 
   private static final List<String> SUBCOMMANDS =
-          List.of("pickle", "waffle");
+          List.of("pickle", "waffle", "gurkenwerfer");
 
   private static final String USAGE = "Usage: /%s [pickle|waffle]";
 
@@ -69,6 +70,24 @@ public class GurkCommand implements CommandExecutor, TabCompleter {
         }
         player.getInventory().addItem(item);
         player.sendMessage("You received a \"waffle\".");
+        return true;
+        }
+      case "gurkenwerfer":
+        {
+        player.sendMessage("Summoning the Pickle Man...");
+        Bukkit.dispatchCommand(player, "summon frog ~ ~ ~ "
+                + "{variant:temperate,Health:9999,active_effects:"
+                + "[{id:invisibility,duration:9999999,show_particles:0b},"
+                + "{id:jump_boost,duration:9999999,"
+                + "amplifier:5,show_particles:0b}],attributes:"
+                + "[{id:movement_speed,base:2f},{id:safe_fall_distance,base:1024f},"
+                + "{id:max_health,base:9999f}],Passengers:[{id:giant,CustomName:"
+                + "[{text:\"PICKLE MAN\",color:dark_green}],CustomNameVisible:1b,"
+                + "Health:420,Glowing:1b,PersistenceRequired:1b,equipment:{mainhand:"
+                + "{id:sea_pickle,components:{enchantments:{luck_of_the_sea:255}}}},"
+                + "drop_chances:{mainhand:0.0001f},attributes:[{id:safe_fall_distance,base"
+                + ":1024f},"
+                + "{id:scale,base:0.5f},{id:max_health,base:420f}]}]}");
         return true;
         }
       default:
