@@ -1,0 +1,21 @@
+main: com.jbm11208.gurkgurkgurk.GurkPlugin
+name: Gurk
+version: "1.6.9"
+api-version: "1.21"
+author: jbm11208
+description: Gurk Gurk Gurk
+commands:
+
+  gurk:
+    description: Gives sea pickles; '/gurk pickle' or '/gurk waffle'
+    usage: /<command> [pickle|waffle]
+    aliases: gurken
+permissions:
+  example.test:
+    description: DESCRIPTION
+    default: true
+  example.*:
+    description: Grants all other permissions
+    default: false
+    children:
+      example.test: true
